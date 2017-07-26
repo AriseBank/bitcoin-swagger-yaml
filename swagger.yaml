@@ -20,7 +20,7 @@ paths:
       tags:
       - "General"
       description: "Add a nrequired-to-sign multisignature address to the wallet.\
-        \ Each key is a Syscoin address or hex-encoded public key. If 'account' is\
+        \ Each key is a Bitcoin address or hex-encoded public key. If 'account' is\
         \ specified (DEPRECATED), assign address to that account."
       operationId: "addmultisigaddress"
       parameters:
@@ -31,7 +31,7 @@ paths:
           $ref: "#/definitions/AddMultisigAddressRequest"
       responses:
         200:
-          description: "A syscoin address associated with the keys."
+          description: "A Bitcoin address associated with the keys."
           schema:
             type: "string"
         default:
@@ -46,13 +46,13 @@ paths:
     get:
       tags:
       - "General"
-      description: "Reveals the private key corresponding to 'syscoinaddress'. Then\
+      description: "Reveals the private key corresponding to 'Bitcoinaddress'. Then\
         \ the importprivkey can be used with this output."
       operationId: "dumpprivkey"
       parameters:
       - name: "address"
         in: "query"
-        description: "The syscoin address for the private key"
+        description: "The Bitcoin address for the private key"
         required: true
         type: "string"
       responses:
@@ -100,9 +100,9 @@ paths:
       description: "DEPRECATED. Returns the account associated with the given address."
       operationId: "getaccount"
       parameters:
-      - name: "syscoinaddress"
+      - name: "Bitcoinaddress"
         in: "query"
-        description: "The syscoin address for account lookup."
+        description: "The Bitcoin address for account lookup."
         required: true
         type: "string"
       responses:
@@ -122,7 +122,7 @@ paths:
     get:
       tags:
       - "General"
-      description: "DEPRECATED. Returns the current Syscoin address for receiving\
+      description: "DEPRECATED. Returns the current Bitcoin address for receiving\
         \ payments to this account."
       operationId: "getaccountaddress"
       parameters:
@@ -257,7 +257,7 @@ paths:
     post:
       tags:
       - "General"
-      description: "Returns a new Syscoin address for receiving payments. If 'account'\
+      description: "Returns a new Bitcoin address for receiving payments. If 'account'\
         \ is specified (DEPRECATED), it is added to the address book so payments received\
         \ with the address will be credited to 'account'."
       operationId: "getnewaddress"
@@ -336,13 +336,13 @@ paths:
     get:
       tags:
       - "General"
-      description: "Returns the total amount received by the given syscoinaddress\
+      description: "Returns the total amount received by the given Bitcoinaddress\
         \ in transactions with at least minconf confirmations."
       operationId: "getreceivedbyaddress"
       parameters:
-      - name: "syscoinaddress"
+      - name: "Bitcoinaddress"
         in: "query"
-        description: "The syscoin address for transactions."
+        description: "The Bitcoin address for transactions."
         required: true
         type: "string"
       - name: "minconf"
@@ -418,7 +418,7 @@ paths:
     get:
       tags:
       - "General"
-      description: "Returns a new Syscoin (starts with 1) address for receiving payments.\
+      description: "Returns a new Bitcoin (starts with 1) address for receiving payments.\
         \ If 'account' is specified (DEPRECATED), it is added to the address book\
         \ so payments received with the address will be credited to 'account'."
       operationId: "getv2address"
@@ -893,7 +893,7 @@ paths:
       tags:
       - "General"
       description: "DEPRECATED (use sendtoaddress). Sent an amount from an account\
-        \ to a syscoin address. The amount is a real and is rounded to the nearest\
+        \ to a Bitcoin address. The amount is a real and is rounded to the nearest\
         \ 0.00000001. Requires wallet passphrase to be set with walletpassphrase call."
       operationId: "sendfrom"
       parameters:
@@ -998,10 +998,10 @@ paths:
     post:
       tags:
       - "General"
-      description: "Return information about the given syscoin address."
+      description: "Return information about the given Bitcoin address."
       operationId: "validateaddress"
       parameters:
-      - name: "syscoinaddress"
+      - name: "Bitcoinaddress"
         in: "query"
         required: true
         type: "string"
@@ -1025,9 +1025,9 @@ paths:
       description: "Verify a signed message"
       operationId: "verifymessage"
       parameters:
-      - name: "syscoinaddress"
+      - name: "Bitcoinaddress"
         in: "query"
-        description: "The syscoin address to use for the signature."
+        description: "The Bitcoin address to use for the signature."
         required: true
         type: "string"
       - name: "signature"
@@ -1082,7 +1082,7 @@ paths:
       - "General"
       description: "Stores the wallet decryption key in memory for 'timeout' seconds.\
         \ This is needed prior to performing transactions related to private keys\
-        \ such as sending syscoins"
+        \ such as sending Bitcoins"
       operationId: "walletpassphrase"
       parameters:
       - in: "body"
@@ -1164,7 +1164,7 @@ definitions:
         description: "the wallet version"
       balance:
         type: "number"
-        description: "the total syscoin balance of the wallet"
+        description: "the total Bitcoin balance of the wallet"
       blocks:
         type: "number"
         description: "the current number of blocks processed in the server"
@@ -1401,7 +1401,7 @@ definitions:
           \ returned."
       address:
         type: "string"
-        description: "The syscoin address validated"
+        description: "The Bitcoin address validated"
       ismine:
         type: "boolean"
         description: "If the address is yours or not"
@@ -1527,7 +1527,7 @@ definitions:
           \ be \"\" for the default account."
       address:
         type: "string"
-        description: "The syscoin address involved in the transaction"
+        description: "The Bitcoin address involved in the transaction"
       category:
         type: "string"
         description: "The category, either 'send' or 'receive'"
@@ -1573,9 +1573,9 @@ definitions:
         description: "the transaction fee configuration, set in SYS/kB"
   AddressGrouping:
     properties:
-      syscoinaddress:
+      Bitcoinaddress:
         type: "string"
-        description: "The syscoin address"
+        description: "The Bitcoin address"
       amount:
         type: "number"
         description: "The amount in SYS"
@@ -1616,7 +1616,7 @@ definitions:
           \ Will be \"\" for the default account."
       address:
         type: "string"
-        description: "The syscoin address of the transaction. Not present for move\
+        description: "The Bitcoin address of the transaction. Not present for move\
           \ transactions (category = move)."
       category:
         type: "string"
@@ -1677,7 +1677,7 @@ definitions:
           \ It will be \"\" for the default account."
       address:
         type: "string"
-        description: "The syscoin address of the transaction. Not present for move\
+        description: "The Bitcoin address of the transaction. Not present for move\
           \ transactions (category = move)."
       category:
         type: "string"
@@ -1750,8 +1750,8 @@ definitions:
         description: "The number of required signatures out of the n keys or addresses."
       keysobject:
         type: "string"
-        description: "A json array of syscoin addresses or hex-encoded public keys.\
-          \ [ \"address\"  (string) syscoin address or hex-encoded public key ...\
+        description: "A json array of Bitcoin addresses or hex-encoded public keys.\
+          \ [ \"address\"  (string) Bitcoin address or hex-encoded public key ...\
           \ ]"
       account:
         type: "string"
@@ -1783,9 +1783,9 @@ definitions:
         description: "Add the P2SH version of the script as well"
   ImportPrivKeyRequest:
     required:
-    - "syscoinprivkey"
+    - "Bitcoinprivkey"
     properties:
-      syscoinprivkey:
+      Bitcoinprivkey:
         type: "string"
         description: "The private key (see dumpprivkey)"
       label:
@@ -1841,15 +1841,15 @@ definitions:
     required:
     - "amount"
     - "fromaccount"
-    - "tosyscoinaddress"
+    - "toBitcoinaddress"
     properties:
       fromaccount:
         type: "string"
         description: "The name of the account to send funds from. May be the default\
           \ account using \"\"."
-      tosyscoinaddress:
+      toBitcoinaddress:
         type: "string"
-        description: "The syscoin address to send funds to."
+        description: "The Bitcoin address to send funds to."
       amount:
         type: "number"
         description: "he amount in SYS (transaction fee is added on top)."
@@ -1877,7 +1877,7 @@ definitions:
       amounts:
         type: "string"
         description: "A json object with addresses and amounts { \"address\":amount\
-          \   (numeric) The syscoin address is the key, the numeric amount in SYS\
+          \   (numeric) The Bitcoin address is the key, the numeric amount in SYS\
           \ is the value,...}"
       minconf:
         type: "number"
@@ -1890,17 +1890,17 @@ definitions:
         type: "string"
         description: "A json array with addresses. The fee will be equally deducted\
           \ from the amount of each selected address. Those recipients will receive\
-          \ less syscoins than you enter in their corresponding amount field. If no\
+          \ less Bitcoins than you enter in their corresponding amount field. If no\
           \ addresses are specified here, the sender pays the fee. [ \"address\" Subtract\
           \ fee from this address,... ]"
   SendToAddressRequest:
     required:
     - "amount"
-    - "syscoinaddress"
+    - "Bitcoinaddress"
     properties:
-      syscoinaddress:
+      Bitcoinaddress:
         type: "string"
-        description: "The syscoin address to send to."
+        description: "The Bitcoin address to send to."
       amount:
         type: "number"
         description: "The amount in SYS to send. eg 0.1"
@@ -1916,15 +1916,15 @@ definitions:
       subtractfeefromamount:
         type: "string"
         description: "The fee will be deducted from the amount being sent. The recipient\
-          \ will receive less syscoins than you enter in the amount field."
+          \ will receive less Bitcoins than you enter in the amount field."
   SignMessageRequest:
     required:
     - "message"
-    - "syscoinaddress"
+    - "Bitcoinaddress"
     properties:
-      syscoinaddress:
+      Bitcoinaddress:
         type: "string"
-        description: "The syscoin address to use for the private key."
+        description: "The Bitcoin address to use for the private key."
       message:
         type: "string"
         description: "The message to create a signature of."
