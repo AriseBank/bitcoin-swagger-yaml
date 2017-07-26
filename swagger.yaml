@@ -1,0 +1,1964 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.1"
+  title: "Bitcoin API"
+host: "bitcoin-api.arisebank.net"
+tags:
+- name: "General"
+  description: "All general wallet operations."
+schemes:
+- "http"
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /addmultisigaddress:
+    post:
+      tags:
+      - "General"
+      description: "Add a nrequired-to-sign multisignature address to the wallet.\
+        \ Each key is a Syscoin address or hex-encoded public key. If 'account' is\
+        \ specified (DEPRECATED), assign address to that account."
+      operationId: "addmultisigaddress"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/AddMultisigAddressRequest"
+      responses:
+        200:
+          description: "A syscoin address associated with the keys."
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /dumpprivkey:
+    get:
+      tags:
+      - "General"
+      description: "Reveals the private key corresponding to 'syscoinaddress'. Then\
+        \ the importprivkey can be used with this output."
+      operationId: "dumpprivkey"
+      parameters:
+      - name: "address"
+        in: "query"
+        description: "The syscoin address for the private key"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /dumpwallet:
+    get:
+      tags:
+      - "General"
+      description: "Dumps all wallet keys in a human-readable format."
+      operationId: "dumpwallet"
+      parameters:
+      - name: "filename"
+        in: "query"
+        description: "The filename"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getaccount:
+    get:
+      tags:
+      - "General"
+      description: "DEPRECATED. Returns the account associated with the given address."
+      operationId: "getaccount"
+      parameters:
+      - name: "syscoinaddress"
+        in: "query"
+        description: "The syscoin address for account lookup."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getaccountaddress:
+    get:
+      tags:
+      - "General"
+      description: "DEPRECATED. Returns the current Syscoin address for receiving\
+        \ payments to this account."
+      operationId: "getaccountaddress"
+      parameters:
+      - name: "account"
+        in: "query"
+        description: "The account name for the address. It can also be set to the\
+          \ empty string \"\" to represent the default account. The account does not\
+          \ need to exist, it will be created and a new address created  if there\
+          \ is no account by the given name."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getaddressesbyaccount:
+    get:
+      tags:
+      - "General"
+      description: "DEPRECATED. Returns the list of addresses for the given account."
+      operationId: "getaddressesbyaccount"
+      parameters:
+      - name: "account"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getbalance:
+    get:
+      tags:
+      - "General"
+      description: "If account is not specified, returns the server's total available\
+        \ balance. If account is specified (DEPRECATED), returns the balance in the\
+        \ account. Note that the account \"\" is not the same as leaving the parameter\
+        \ out. The server total may be different to the balance in the default \"\"\
+        \ account."
+      operationId: "getbalance"
+      parameters:
+      - name: "account"
+        in: "query"
+        description: "DEPRECATED. The selected account, or \"*\" for entire wallet.\
+          \ It may be the default account using \"\"."
+        required: false
+        type: "string"
+      - name: "minconf"
+        in: "query"
+        description: "Only include transactions confirmed at least this many times."
+        required: false
+        type: "number"
+      - name: "includeWatchonly"
+        in: "query"
+        description: "Also include balance in watchonly addresses (see 'importaddress')"
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "number"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getinfo:
+    get:
+      tags:
+      - "General"
+      description: "Returns an object containing various state info."
+      operationId: "getinfo"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Info"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getmininginfo:
+    get:
+      tags:
+      - "General"
+      description: "Returns a json object containing mining-related information."
+      operationId: "getmininginfo"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/MiningInfo"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getnewaddress:
+    post:
+      tags:
+      - "General"
+      description: "Returns a new Syscoin address for receiving payments. If 'account'\
+        \ is specified (DEPRECATED), it is added to the address book so payments received\
+        \ with the address will be credited to 'account'."
+      operationId: "getnewaddress"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: false
+        schema:
+          $ref: "#/definitions/GetNewAddressRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getpeerinfo:
+    get:
+      tags:
+      - "General"
+      description: "Returns data about each connected network node as a json array\
+        \ of objects."
+      operationId: "getpeerinfo"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/PeerInfoResponse"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getreceivedbyaccount:
+    get:
+      tags:
+      - "General"
+      description: "DEPRECATED. Returns the total amount received by addresses with\
+        \ <account> in transactions with at least [minconf] confirmations."
+      operationId: "getreceivedbyaccount"
+      parameters:
+      - name: "account"
+        in: "query"
+        description: "The selected account, may be the default account using \"\"."
+        required: true
+        type: "string"
+      - name: "minconf"
+        in: "query"
+        description: "Only include transactions confirmed at least this many times."
+        required: false
+        type: "number"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "number"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getreceivedbyaddress:
+    get:
+      tags:
+      - "General"
+      description: "Returns the total amount received by the given syscoinaddress\
+        \ in transactions with at least minconf confirmations."
+      operationId: "getreceivedbyaddress"
+      parameters:
+      - name: "syscoinaddress"
+        in: "query"
+        description: "The syscoin address for transactions."
+        required: true
+        type: "string"
+      - name: "minconf"
+        in: "query"
+        description: "Only include transactions confirmed at least this many times."
+        required: false
+        type: "number"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "number"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /gettransaction:
+    get:
+      tags:
+      - "General"
+      description: "Get detailed information about in-wallet transaction <txid>"
+      operationId: "gettransaction"
+      parameters:
+      - name: "txid"
+        in: "query"
+        description: "The transaction id"
+        required: true
+        type: "string"
+      - name: "includeWatchonly"
+        in: "query"
+        description: "Whether to include watchonly addresses in balance calculation\
+          \ and details[]"
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Transaction"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getunconfirmedbalance:
+    get:
+      tags:
+      - "General"
+      description: "Returns the server's total unconfirmed balance"
+      operationId: "getunconfirmedbalance"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "number"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getv2address:
+    get:
+      tags:
+      - "General"
+      description: "Returns a new Syscoin (starts with 1) address for receiving payments.\
+        \ If 'account' is specified (DEPRECATED), it is added to the address book\
+        \ so payments received with the address will be credited to 'account'."
+      operationId: "getv2address"
+      parameters:
+      - name: "account"
+        in: "query"
+        description: "DEPRECATED. The account name for the address to be linked to.\
+          \ If not provided, the default account \"\" is used. It can also be set\
+          \ to the empty string \"\" to represent the default account. The account\
+          \ does not need to exist, it will be created if there is no account by the\
+          \ given name."
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getwalletinfo:
+    get:
+      tags:
+      - "General"
+      description: "Returns an object containing various wallet state info."
+      operationId: "getwalletinfo"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/WalletInfo"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /getzaddress:
+    get:
+      tags:
+      - "General"
+      description: "Returns a new ZCash address for receiving payments in ZCash transaparent\
+        \ tokens. so payments received with the address will be credited to 'account'."
+      operationId: "getzaddress"
+      parameters:
+      - name: "address"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/WalletInfo"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /importaddress:
+    get:
+      tags:
+      - "General"
+      description: "Adds a script (in hex) or address that can be watched as if it\
+        \ were in your wallet but cannot be used to spend."
+      operationId: "importaddress"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/ImportAddressRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /importprivkey:
+    get:
+      tags:
+      - "General"
+      description: "Adds a private key (as returned by dumpprivkey) to your wallet."
+      operationId: "importprivkey"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/ImportPrivKeyRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /importprunedfunds:
+    get:
+      tags:
+      - "General"
+      description: "Imports funds without rescan. Corresponding address or script\
+        \ must previously be included in wallet. Aimed towards pruned wallets. The\
+        \ end-user is responsible to import additional transactions that subsequently\
+        \ spend the imported outputs or rescan after the point in the blockchain the\
+        \ transaction is included."
+      operationId: "importprunedfunds"
+      parameters:
+      - name: "rawtransaction"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "txoutproof"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /importpubkey:
+    get:
+      tags:
+      - "General"
+      description: "Adds a public key (in hex) that can be watched as if it were in\
+        \ your wallet but cannot be used to spend."
+      operationId: "importpubkey"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/ImportPubKeyRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /importwallet:
+    get:
+      tags:
+      - "General"
+      description: "Imports keys from a wallet dump file (see dumpwallet)."
+      operationId: "importwallet"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/ImportWalletRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /listaccounts:
+    get:
+      tags:
+      - "General"
+      description: "DEPRECATED. Returns Object that has account names as keys, account\
+        \ balances as values."
+      operationId: "listaccounts"
+      parameters:
+      - name: "minconf"
+        in: "query"
+        description: "Only include transactions with at least this many confirmations"
+        required: false
+        type: "number"
+      - name: "includeWatchonly"
+        in: "query"
+        description: "Include balances in watchonly addresses (see 'importaddress')"
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "object"
+            properties: {}
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /listaddressgroupings:
+    get:
+      tags:
+      - "General"
+      description: "Lists groups of addresses which have had their common ownership\
+        \ made public by common use as inputs or as the resulting change in past transactions"
+      operationId: "listaddressgroupings"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              type: "array"
+              items:
+                $ref: "#/definitions/AddressGrouping"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /listreceivedbyaccount:
+    get:
+      tags:
+      - "General"
+      description: "DEPRECATED. List balances by account."
+      operationId: "listreceivedbyaccount"
+      parameters:
+      - name: "minconf"
+        in: "query"
+        description: "Only include transactions confirmed at least this many times."
+        required: false
+        type: "number"
+      - name: "includeempty"
+        in: "query"
+        description: "Whether to include accounts that haven't received any payments."
+        required: false
+        type: "boolean"
+      - name: "includeWatchonly"
+        in: "query"
+        description: "Whether to include watchonly addresses (see 'importaddress')."
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Account"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /listreceivedbyaddress:
+    get:
+      tags:
+      - "General"
+      description: "List balances by receiving address."
+      operationId: "listreceivedbyaddress"
+      parameters:
+      - name: "minconf"
+        in: "query"
+        description: "Only include transactions confirmed at least this many times."
+        required: false
+        type: "number"
+      - name: "includeempty"
+        in: "query"
+        description: "Whether to include accounts that haven't received any payments."
+        required: false
+        type: "boolean"
+      - name: "includeWatchonly"
+        in: "query"
+        description: "Whether to include watchonly addresses (see 'importaddress')."
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Account"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /listsinceblock:
+    get:
+      tags:
+      - "General"
+      description: "Get all transactions in blocks since block [blockhash], or all\
+        \ transactions if omitted"
+      operationId: "listsinceblock"
+      parameters:
+      - name: "blockhash"
+        in: "query"
+        description: "The block hash to list transactions since"
+        required: false
+        type: "string"
+      - name: "includeWatchonly"
+        in: "query"
+        description: "Whether to include watchonly addresses (see 'importaddress')."
+        required: false
+        type: "boolean"
+      - name: "target-confirmations"
+        in: "query"
+        required: false
+        type: "number"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ListSinceBlockResponse"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /listtransactions:
+    get:
+      tags:
+      - "General"
+      description: "Returns up to 'count' most recent transactions skipping the first\
+        \ 'from' transactions for account 'account'."
+      operationId: "listtransactions"
+      parameters:
+      - name: "account"
+        in: "query"
+        description: "DEPRECATED. The account name. Should be \"*\"."
+        required: false
+        type: "string"
+      - name: "count"
+        in: "query"
+        description: "The number of transactions to return"
+        required: false
+        type: "number"
+      - name: "from"
+        in: "query"
+        description: "The number of transactions to skip"
+        required: false
+        type: "number"
+      - name: "includeWatchonly"
+        in: "query"
+        description: "Include transactions to watchonly addresses (see 'importaddress')"
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TransactionListEntry"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  
+  /move:
+    post:
+      tags:
+      - "General"
+      description: "DEPRECATED. Move a specified amount from one account in your wallet\
+        \ to another."
+      operationId: "move"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/MoveRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "boolean"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /removeprunedfunds:
+    get:
+      tags:
+      - "General"
+      description: "Deletes the specified transaction from the wallet. Meant for use\
+        \ with pruned wallets and as a companion to importprunedfunds. This will effect\
+        \ wallet balances."
+      operationId: "removeprunedfunds"
+      parameters:
+      - name: "txid"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /sendfrom:
+    post:
+      tags:
+      - "General"
+      description: "DEPRECATED (use sendtoaddress). Sent an amount from an account\
+        \ to a syscoin address. The amount is a real and is rounded to the nearest\
+        \ 0.00000001. Requires wallet passphrase to be set with walletpassphrase call."
+      operationId: "sendfrom"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/SendFromRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /sendmany:
+    post:
+      tags:
+      - "General"
+      description: "Send multiple times. Amounts are double-precision floating point\
+        \ numbers. Requires wallet passphrase to be set with walletpassphrase call."
+      operationId: "sendmany"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/SendManyRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /sendtoaddress:
+    post:
+      tags:
+      - "General"
+      description: "Send an amount to a given address. The amount is a real and is\
+        \ rounded to the nearest 0.00000001. Requires wallet passphrase to be set\
+        \ with walletpassphrase call."
+      operationId: "sendtoaddress"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/SendToAddressRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /signmessage:
+    post:
+      tags:
+      - "General"
+      description: "Sign a message with the private key of an address. Requires wallet\
+        \ passphrase to be set with walletpassphrase call."
+      operationId: "signmessage"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/SignMessageRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /validateaddress:
+    post:
+      tags:
+      - "General"
+      description: "Return information about the given syscoin address."
+      operationId: "validateaddress"
+      parameters:
+      - name: "syscoinaddress"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/ValidateAddressResponse"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /verifymessage:
+    get:
+      tags:
+      - "General"
+      description: "Verify a signed message"
+      operationId: "verifymessage"
+      parameters:
+      - name: "syscoinaddress"
+        in: "query"
+        description: "The syscoin address to use for the signature."
+        required: true
+        type: "string"
+      - name: "signature"
+        in: "query"
+        description: "The signature provided by the signer in base 64 encoding (see\
+          \ signmessage)."
+        required: true
+        type: "string"
+      - name: "message"
+        in: "query"
+        description: "The message that was signed."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "If the signature is verified or not."
+          schema:
+            type: "boolean"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /walletlock:
+    post:
+      tags:
+      - "General"
+      description: "Removes the wallet encryption key from memory, locking the wallet.\
+        \ After calling this method, you will need to call walletpassphrase again\
+        \ before being able to call any methods which require the wallet to be unlocked."
+      operationId: "walletlock"
+      parameters: []
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /walletpassphrase:
+    post:
+      tags:
+      - "General"
+      description: "Stores the wallet decryption key in memory for 'timeout' seconds.\
+        \ This is needed prior to performing transactions related to private keys\
+        \ such as sending syscoins"
+      operationId: "walletpassphrase"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/WalletPassphraseRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+  /walletpassphrasechange:
+    post:
+      tags:
+      - "General"
+      description: "Changes the wallet passphrase from 'oldpassphrase' to 'newpassphrase'."
+      operationId: "walletpassphrasechange"
+      parameters:
+      - in: "body"
+        name: "request"
+        required: true
+        schema:
+          $ref: "#/definitions/WalletPassphraseChangeRequest"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "string"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+      - token: []
+      x-swagger-router-controller: "General"
+    x-swagger-router-controller: "rpc"
+securityDefinitions:
+  token:
+    type: "apiKey"
+    name: "token"
+    in: "header"
+definitions:
+  Info:
+    required:
+    - "balance"
+    - "blocks"
+    - "connections"
+    - "difficulty"
+    - "errors"
+    - "keypoololdest"
+    - "keypoolsize"
+    - "paytxfee"
+    - "protocolversion"
+    - "proxy"
+    - "relayfee"
+    - "testnet"
+    - "timeoffset"
+    - "unlocked_until"
+    - "version"
+    - "walletversion"
+    properties:
+      version:
+        type: "number"
+        description: "the server version"
+      protocolversion:
+        type: "number"
+        description: "the protocol version"
+      walletversion:
+        type: "number"
+        description: "the wallet version"
+      balance:
+        type: "number"
+        description: "the total syscoin balance of the wallet"
+      blocks:
+        type: "number"
+        description: "the current number of blocks processed in the server"
+      timeoffset:
+        type: "number"
+        description: "the time offset"
+      connections:
+        type: "number"
+        description: "the number of connections"
+      proxy:
+        type: "string"
+        description: "the proxy used by the server"
+      difficulty:
+        type: "number"
+        description: "the current difficulty"
+      testnet:
+        type: "boolean"
+        description: "if the server is using testnet or not"
+      keypoololdest:
+        type: "number"
+        description: "the timestamp (seconds since GMT epoch) of the oldest pre-generated\
+          \ key in the key pool"
+      keypoolsize:
+        type: "number"
+        description: "how many new keys are pre-generated"
+      unlocked_until:
+        type: "number"
+        description: "the timestamp in seconds since epoch (midnight Jan 1 1970 GMT)\
+          \ that the wallet is unlocked for transfers, or 0 if the wallet is locked"
+      paytxfee:
+        type: "number"
+        description: "the transaction fee set in SYS/kB"
+      relayfee:
+        type: "number"
+        description: "minimum relay fee for non-free transactions in SYS/kB"
+      errors:
+        type: "string"
+        description: "any error messages"
+  MiningInfo:
+    required:
+    - "blocks"
+    - "chain"
+    - "currentblocksize"
+    - "currentblocktx"
+    - "difficulty"
+    - "errors"
+    - "generate"
+    - "genproclimit"
+    - "pooledtx"
+    - "testnet"
+    properties:
+      blocks:
+        type: "number"
+        description: "The current block"
+      currentblocksize:
+        type: "number"
+        description: "The last block size"
+      currentblocktx:
+        type: "number"
+        description: "The last block transaction"
+      difficulty:
+        type: "number"
+        description: "The current difficulty"
+      errors:
+        type: "string"
+        description: "Current errors"
+      genproclimit:
+        type: "number"
+        description: "The processor limit for generation. -1 if no generation."
+      networkhashps:
+        type: "number"
+        description: "Current network hashrate in kbs"
+      pooledtx:
+        type: "number"
+        description: "The size of the mem pool"
+      testnet:
+        type: "boolean"
+        description: "If using testnet or not"
+      chain:
+        type: "string"
+        description: "current network name as defined in BIP70 (main, test, regtest)"
+      generate:
+        type: "boolean"
+        description: "If the generation is on or off (see getgenerate or setgenerate\
+          \ calls)"
+  PeerInfoResponse:
+    type: "array"
+    items:
+      $ref: "#/definitions/PeerInfo"
+  PeerInfo:
+    required:
+    - "addr"
+    - "addrlocal"
+    - "banscore"
+    - "bytesrecv"
+    - "bytesrecv_per_msg"
+    - "bytessent"
+    - "bytessent_per_msg"
+    - "conntime"
+    - "id"
+    - "inbound"
+    - "inflight"
+    - "lastrecv"
+    - "lastsend"
+    - "minping"
+    - "pingtime"
+    - "relaytxes"
+    - "services"
+    - "startingheight"
+    - "subver"
+    - "synced_blocks"
+    - "synced_headers"
+    - "timeoffset"
+    - "version"
+    - "whitelisted"
+    properties:
+      id:
+        type: "number"
+        description: "Peer index"
+      addr:
+        type: "string"
+        description: "The ip address and port of the peer"
+      addrlocal:
+        type: "string"
+        description: "local address"
+      services:
+        type: "string"
+        description: "The services offered"
+      relaytxes:
+        type: "boolean"
+        description: "Whether peer has asked us to relay transactions to it"
+      lastsend:
+        type: "number"
+        description: "The time in seconds since epoch (Jan 1 1970 GMT) of the last\
+          \ send"
+      lastrecv:
+        type: "number"
+        description: "The time in seconds since epoch (Jan 1 1970 GMT) of the last\
+          \ receive"
+      bytessent:
+        type: "number"
+        description: "The total bytes sent"
+      bytesrecv:
+        type: "number"
+        description: "The total bytes received"
+      conntime:
+        type: "number"
+        description: "The connection time in seconds since epoch (Jan 1 1970 GMT)"
+      timeoffset:
+        type: "number"
+        description: "The time offset in seconds"
+      pingtime:
+        type: "number"
+        description: "ping time"
+      minping:
+        type: "number"
+        description: "minimum observed ping time"
+      version:
+        type: "number"
+        description: "The peer version, such as 7001"
+      subver:
+        type: "string"
+        description: "The string version"
+      inbound:
+        type: "boolean"
+        description: "Inbound (true) or Outbound (false)"
+      startingheight:
+        type: "number"
+        description: "The starting height (block) of the peer"
+      banscore:
+        type: "number"
+        description: "The ban score"
+      synced_headers:
+        type: "number"
+        description: "The last header we have in common with this peer"
+      synced_blocks:
+        type: "number"
+        description: "The last block we have in common with this peer"
+      inflight:
+        type: "array"
+        description: "The heights of blocks we're currently asking from this peer"
+        items:
+          type: "number"
+      whitelisted:
+        type: "boolean"
+        description: "If this peer is whitelisted"
+      bytessent_per_msg:
+        $ref: "#/definitions/ByteMessageInfo"
+      bytesrecv_per_msg:
+        $ref: "#/definitions/ByteMessageInfo"
+  ByteMessageInfo:
+    required:
+    - "addr"
+    - "getheaders"
+    - "headers"
+    - "inv"
+    - "ping"
+    - "pong"
+    - "sendheaders"
+    - "verack"
+    - "version"
+    properties:
+      addr:
+        type: "number"
+      block:
+        type: "number"
+      getaddr:
+        type: "number"
+      getdata:
+        type: "number"
+      getheaders:
+        type: "number"
+      headers:
+        type: "number"
+      inv:
+        type: "number"
+      ping:
+        type: "number"
+      pong:
+        type: "number"
+      sendheaders:
+        type: "number"
+      tx:
+        type: "number"
+      verack:
+        type: "number"
+      version:
+        type: "number"
+  ValidateAddressResponse:
+    properties:
+      isvalid:
+        type: "boolean"
+        description: "If the address is valid or not. If not, this is the only property\
+          \ returned."
+      address:
+        type: "string"
+        description: "The syscoin address validated"
+      ismine:
+        type: "boolean"
+        description: "If the address is yours or not"
+      iswatchonly:
+        type: "boolean"
+        description: "If the address is watchonly"
+      isscript:
+        type: "boolean"
+        description: "If the key is a script"
+      pubkey:
+        type: "string"
+        description: "The hex value of the raw public key"
+      iscompressed:
+        type: "boolean"
+        description: "If the address is compressed"
+      account:
+        type: "string"
+        description: "DEPRECATED. The account associated with the address, \"\" is\
+          \ the default account"
+  ErrorResponse:
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+  Alias:
+    required:
+    - "name"
+    discriminator: "name"
+    properties:
+      name:
+        type: "string"
+      value:
+        type: "string"
+      privatevalue:
+        type: "string"
+      password:
+        type: "string"
+      txid:
+        type: "string"
+      address:
+        type: "string"
+      alias_peg:
+        type: "string"
+      balance:
+        type: "number"
+      ismine:
+        type: "boolean"
+      safesearch:
+        type: "string"
+      acceptcerttransfers:
+        type: "string"
+      safetylevel:
+        type: "number"
+      buyer_rating:
+        type: "number"
+      buyer_ratingcount:
+        type: "number"
+      buyer_rating_display:
+        type: "string"
+      seller_rating:
+        type: "number"
+      seller_ratingcount:
+        type: "number"
+      seller_rating_display:
+        type: "string"
+      arbiter_rating:
+        type: "number"
+      arbiter_ratingcount:
+        type: "number"
+      arbiter_rating_display:
+        type: "string"
+      lastupdate_height:
+        type: "number"
+      expires_in:
+        type: "number"
+      expires_on:
+        type: "number"
+      expired:
+        type: "boolean"
+      pending:
+        type: "boolean"
+      multisiginfo:
+        $ref: "#/definitions/MultiSignatureInfo"
+  Transaction:
+    properties:
+      amount:
+        type: "string"
+        description: "The transaction amount in SYS"
+      confirmations:
+        type: "number"
+        description: "The number of confirmations"
+      blockhash:
+        type: "string"
+        description: "The block hash"
+      blockindex:
+        type: "number"
+        description: "The block index"
+      blocktime:
+        type: "number"
+        description: "The time in seconds since epoch (1 Jan 1970 GMT)"
+      txid:
+        type: "string"
+        description: "The transaction id."
+      time:
+        type: "number"
+        description: "The transaction time in seconds since epoch (1 Jan 1970 GMT)"
+      timereceived:
+        type: "number"
+        description: "The time received in seconds since epoch (1 Jan 1970 GMT)"
+      details:
+        type: "array"
+        items:
+          $ref: "#/definitions/TransactionDetailEntry"
+      hex:
+        type: "string"
+        description: "Raw data for transaction"
+  TransactionDetailEntry:
+    properties:
+      account:
+        type: "string"
+        description: "DEPRECATED. The account name involved in the transaction, can\
+          \ be \"\" for the default account."
+      address:
+        type: "string"
+        description: "The syscoin address involved in the transaction"
+      category:
+        type: "string"
+        description: "The category, either 'send' or 'receive'"
+      amount:
+        type: "number"
+        description: "The amount in SYS"
+      label:
+        type: "string"
+        description: "A comment for the address/transaction, if any"
+      vout:
+        type: "number"
+        description: "the vout value"
+  WalletInfo:
+    properties:
+      walletversion:
+        type: "number"
+        description: "the wallet version"
+      balance:
+        type: "number"
+        description: "the total confirmed balance of the wallet in SYS"
+      unconfirmed_balance:
+        type: "number"
+        description: "the total unconfirmed balance of the wallet in SYS"
+      immature_balance:
+        type: "number"
+        description: "the total immature balance of the wallet in SYS"
+      txcount:
+        type: "number"
+        description: "the total number of transactions in the wallet"
+      keypoololdest:
+        type: "number"
+        description: "the timestamp (seconds since GMT epoch) of the oldest pre-generated\
+          \ key in the key pool"
+      keypoolsize:
+        type: "number"
+        description: "how many new keys are pre-generated"
+      unlocked_until:
+        type: "number"
+        description: "the timestamp in seconds since epoch (midnight Jan 1 1970 GMT)\
+          \ that the wallet is unlocked for transfers, or 0 if the wallet is locked"
+      paytxfee:
+        type: "number"
+        description: "the transaction fee configuration, set in SYS/kB"
+  AddressGrouping:
+    properties:
+      syscoinaddress:
+        type: "string"
+        description: "The syscoin address"
+      amount:
+        type: "number"
+        description: "The amount in SYS"
+      account:
+        type: "string"
+        description: "(optional) The account (DEPRECATED)"
+  Account:
+    properties:
+      involvesWatchonly:
+        type: "boolean"
+        description: "Only returned if imported addresses were involved in transaction"
+      account:
+        type: "string"
+        description: "The account name of the receiving account"
+      amount:
+        type: "number"
+        description: "The total amount received by addresses with this account"
+      confirmations:
+        type: "number"
+        description: "The number of confirmations of the most recent transaction included"
+      label:
+        type: "string"
+        description: "A comment for the address/transaction, if any"
+  ListSinceBlockResponse:
+    properties:
+      transactions:
+        type: "array"
+        items:
+          $ref: "#/definitions/SinceBlockTransactionEntry"
+      lastblock:
+        type: "string"
+        description: "The hash of the last block"
+  SinceBlockTransactionEntry:
+    properties:
+      account:
+        type: "string"
+        description: "DEPRECATED. The account name associated with the transaction.\
+          \ Will be \"\" for the default account."
+      address:
+        type: "string"
+        description: "The syscoin address of the transaction. Not present for move\
+          \ transactions (category = move)."
+      category:
+        type: "string"
+        description: "The transaction category. 'send' has negative amounts, 'receive'\
+          \ has positive amounts."
+      amount:
+        type: "number"
+        description: "The amount in SYS. This is negative for the 'send' category,\
+          \ and for the 'move' category for moves outbound. It is positive for the\
+          \ 'receive' category, and for the 'move' category for inbound funds."
+      vout:
+        type: "number"
+        description: "the vout value"
+      fee:
+        type: "number"
+        description: "The amount of the fee in SYS. This is negative and only available\
+          \ for the 'send' category of transactions."
+      confirmations:
+        type: "number"
+        description: "The number of confirmations for the transaction. Available for\
+          \ 'send' and 'receive' category of transactions."
+      blockhash:
+        type: "string"
+        description: "The block hash containing the transaction. Available for 'send'\
+          \ and 'receive' category of transactions."
+      blockindex:
+        type: "number"
+        description: "The block index containing the transaction. Available for 'send'\
+          \ and 'receive' category of transactions."
+      blocktime:
+        type: "number"
+        description: "The block time in seconds since epoch (1 Jan 1970 GMT)."
+      txid:
+        type: "string"
+        description: "The transaction id. Available for 'send' and 'receive' category\
+          \ of transactions."
+      time:
+        type: "number"
+        description: "The transaction time in seconds since epoch (Jan 1 1970 GMT)."
+      timereceived:
+        type: "number"
+        description: "The time received in seconds since epoch (Jan 1 1970 GMT). Available\
+          \ for 'send' and 'receive' category of transactions."
+      comment:
+        type: "string"
+        description: "If a comment is associated with the transaction."
+      label:
+        type: "string"
+        description: "A comment for the address/transaction, if any"
+      to:
+        type: "string"
+        description: "If a comment to is associated with the transaction."
+  TransactionListEntry:
+    properties:
+      account:
+        type: "string"
+        description: "DEPRECATED. The account name associated with the transaction.\
+          \ It will be \"\" for the default account."
+      address:
+        type: "string"
+        description: "The syscoin address of the transaction. Not present for move\
+          \ transactions (category = move)."
+      category:
+        type: "string"
+        description: "The transaction category. 'move' is a local (off blockchain)\
+          \ transaction between accounts, and not associated with an address, transaction\
+          \ id or block. 'send' and 'receive' transactions are associated with an\
+          \ address, transaction id and block details"
+      amount:
+        type: "number"
+        description: "The amount in SYS. This is negative for the 'send' category,\
+          \ and for the 'move' category for moves outbound. It is positive for the\
+          \ 'receive' category, and for the 'move' category for inbound funds."
+      vout:
+        type: "number"
+        description: "the vout value"
+      fee:
+        type: "number"
+        description: "The amount of the fee in SYS. This is negative and only available\
+          \ for the 'send' category of transactions."
+      confirmations:
+        type: "number"
+        description: "The number of confirmations for the transaction. Available for\
+          \ 'send' and'receive' category of transactions. Negative confirmations indicate\
+          \ the transation conflicts with the block chain"
+      trusted:
+        type: "boolean"
+        description: "Whether we consider the outputs of this unconfirmed transaction\
+          \ safe to spend."
+      blockhash:
+        type: "string"
+        description: "The block hash containing the transaction. Available for 'send'\
+          \ and 'receive' category of transactions."
+      blockindex:
+        type: "string"
+        description: "The block index containing the transaction. Available for 'send'\
+          \ and 'receive' category of transactions."
+      blocktime:
+        type: "number"
+        description: "The block time in seconds since epoch (1 Jan 1970 GMT)."
+      txid:
+        type: "string"
+        description: "The transaction id. Available for 'send' and 'receive' category\
+          \ of transactions."
+      time:
+        type: "number"
+        description: "The transaction time in seconds since epoch (midnight Jan 1\
+          \ 1970 GMT)."
+      timereceived:
+        type: "number"
+        description: "The time received in seconds since epoch (midnight Jan 1 1970\
+          \ GMT). Available for 'send' and 'receive' category of transactions."
+      comment:
+        type: "string"
+        description: "If a comment is associated with the transaction."
+      label:
+        type: "string"
+        description: "A comment for the address/transaction, if any"
+      otheraccount:
+        type: "string"
+        description: "For the 'move' category of transactions, the account the funds\
+          \ came from (for receiving funds, positive amounts), or went to (for sending\
+          \ funds, negative amounts)."
+  AddMultisigAddressRequest:
+    required:
+    - "keysobject"
+    - "nrequired"
+    properties:
+      nrequired:
+        type: "number"
+        description: "The number of required signatures out of the n keys or addresses."
+      keysobject:
+        type: "string"
+        description: "A json array of syscoin addresses or hex-encoded public keys.\
+          \ [ \"address\"  (string) syscoin address or hex-encoded public key ...\
+          \ ]"
+      account:
+        type: "string"
+        description: "DEPRECATED. An account to assign the addresses to."
+  GetNewAddressRequest:
+    properties:
+      account:
+        type: "string"
+        description: "DEPRECATED. The account name for the address to be linked to.\
+          \ If not provided, the default account \"\" is used. It can also be set\
+          \ to the empty string \"\" to represent the default account. The account\
+          \ does not need to exist, it will be created if there is no account by the\
+          \ given name."
+  ImportAddressRequest:
+    required:
+    - "script"
+    properties:
+      script:
+        type: "string"
+        description: "The hex-encoded script (or address)"
+      label:
+        type: "string"
+        description: "An optional label"
+      rescan:
+        type: "boolean"
+        description: "Rescan the wallet for transactions"
+      p2sh:
+        type: "boolean"
+        description: "Add the P2SH version of the script as well"
+  ImportPrivKeyRequest:
+    required:
+    - "syscoinprivkey"
+    properties:
+      syscoinprivkey:
+        type: "string"
+        description: "The private key (see dumpprivkey)"
+      label:
+        type: "string"
+        description: "An optional label"
+      rescan:
+        type: "boolean"
+        description: "Rescan the wallet for transactions"
+  ImportPubKeyRequest:
+    required:
+    - "pubkey"
+    properties:
+      pubkey:
+        type: "string"
+        description: "The hex-encoded public key"
+      label:
+        type: "string"
+        description: "An optional label"
+      rescan:
+        type: "boolean"
+        description: "Rescan the wallet for transactions"
+  ImportWalletRequest:
+    required:
+    - "filename"
+    properties:
+      filename:
+        type: "string"
+        description: "The wallet file"
+  MoveRequest:
+    required:
+    - "amount"
+    - "fromaccount"
+    - "toaccount"
+    properties:
+      fromaccount:
+        type: "string"
+        description: "The name of the account to move funds from. May be the default\
+          \ account using \"\"."
+      toaccount:
+        type: "string"
+        description: "The name of the account to move funds to. May be the default\
+          \ account using \"\"."
+      amount:
+        type: "number"
+        description: "Quantity of SYS to move between accounts."
+      minconf:
+        type: "string"
+        description: "Only use funds with at least this many confirmations."
+      comment:
+        type: "string"
+        description: "An optional comment, stored in the wallet only."
+  SendFromRequest:
+    required:
+    - "amount"
+    - "fromaccount"
+    - "tosyscoinaddress"
+    properties:
+      fromaccount:
+        type: "string"
+        description: "The name of the account to send funds from. May be the default\
+          \ account using \"\"."
+      tosyscoinaddress:
+        type: "string"
+        description: "The syscoin address to send funds to."
+      amount:
+        type: "number"
+        description: "he amount in SYS (transaction fee is added on top)."
+      minconf:
+        type: "number"
+        description: "Only use funds with at least this many confirmations."
+      comment:
+        type: "string"
+        description: "A comment used to store what the transaction is for. This is\
+          \ not part of the transaction, just kept in your wallet."
+      commentto:
+        type: "string"
+        description: "An optional comment to store the name of the person or organization\
+          \ to which you're sending the transaction. This is not part of the transaction,\
+          \ it is just kept in your wallet."
+  SendManyRequest:
+    required:
+    - "amounts"
+    - "fromaccount"
+    properties:
+      fromaccount:
+        type: "string"
+        description: "DEPRECATED. The account to send the funds from. Should be \"\
+          \" for the default account"
+      amounts:
+        type: "string"
+        description: "A json object with addresses and amounts { \"address\":amount\
+          \   (numeric) The syscoin address is the key, the numeric amount in SYS\
+          \ is the value,...}"
+      minconf:
+        type: "number"
+        description: "Only use the balance confirmed at least this many times."
+      comment:
+        type: "string"
+        description: "A comment used to store what the transaction is for. This is\
+          \ not part of the transaction, just kept in your wallet."
+      subtractfeefromamount:
+        type: "string"
+        description: "A json array with addresses. The fee will be equally deducted\
+          \ from the amount of each selected address. Those recipients will receive\
+          \ less syscoins than you enter in their corresponding amount field. If no\
+          \ addresses are specified here, the sender pays the fee. [ \"address\" Subtract\
+          \ fee from this address,... ]"
+  SendToAddressRequest:
+    required:
+    - "amount"
+    - "syscoinaddress"
+    properties:
+      syscoinaddress:
+        type: "string"
+        description: "The syscoin address to send to."
+      amount:
+        type: "number"
+        description: "The amount in SYS to send. eg 0.1"
+      comment:
+        type: "string"
+        description: "A comment used to store what the transaction is for. This is\
+          \ not part of the transaction, just kept in your wallet."
+      commentto:
+        type: "string"
+        description: "An optional comment to store the name of the person or organization\
+          \ to which you're sending the transaction. This is not part of the transaction,\
+          \ it is just kept in your wallet."
+      subtractfeefromamount:
+        type: "string"
+        description: "The fee will be deducted from the amount being sent. The recipient\
+          \ will receive less syscoins than you enter in the amount field."
+  SignMessageRequest:
+    required:
+    - "message"
+    - "syscoinaddress"
+    properties:
+      syscoinaddress:
+        type: "string"
+        description: "The syscoin address to use for the private key."
+      message:
+        type: "string"
+        description: "The message to create a signature of."
+  WalletPassphraseRequest:
+    required:
+    - "passphrase"
+    - "timeout"
+    properties:
+      passphrase:
+        type: "string"
+        description: "The wallet passphrase"
+      timeout:
+        type: "number"
+        description: "The time to keep the decryption key in seconds."
+  WalletPassphraseChangeRequest:
+    required:
+    - "newpassphrase"
+    - "oldpassphrase"
+    properties:
+      oldpassphrase:
+        type: "string"
+        description: "The current passphrase"
+      newpassphrase:
+        type: "string"
+        description: "The new passphrase"
+  MultiSignatureInfo:
+    required:
+    - "redeemscript"
+    - "reqsigners"
+    - "reqsigs"
+    properties:
+      reqsigs:
+        type: "number"
+      reqsigners:
+        type: "string"
+      redeemscript:
+        type: "string"
